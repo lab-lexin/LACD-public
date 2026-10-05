@@ -126,12 +126,9 @@ def retrieve_top_conflicts(query, context, threashold=0):
 
             # Filter threshold for expansion (upstream: min / 0.75, paper Sec 3.2: min / PTC)
             minimum_score = min([p_calib(float(c[1]), TEMPERATURE) for c in predicts_from_reranker])
-            threshold = min(minimum_score / PTC, 0.99)
+            threshold = minimum_score / PTC
 
             predicts_from_reranker_filtering = [c[0] for c in predicts_from_reranker if p_calib(float(c[1]), TEMPERATURE) > threshold]
-            if not predicts_from_reranker_filtering and predicts_from_reranker:
-                # Fallback to top-ranked candidate to prevent silent expansion collapse
-                predicts_from_reranker_filtering = [predicts_from_reranker[0][0]]
 
             # 
             prestige_articles = rex2(

@@ -19,7 +19,7 @@ def rex2(query, articles, conflicts, predicts_from_reranker, k0):
 
     prestige_articles = list(set([article_key_function(p) for p in prestige_articles]))
 
-    result_articles = [p for p in prestige_articles if p not in tested_articles and p != query]
+    result_articles = [p for p in prestige_articles if p not in tested_articles]
 
     result_articles.sort()
 
@@ -52,8 +52,7 @@ def rocchio_binary_retriever(model, laws_df, chroma_collection, article_to_check
         article_to_check,
         add_special_tokens=True,
         max_length=MAX_TOKEN_LENGTH,
-        padding="longest",
-        pad_to_multiple_of=64,
+        padding="max_length",
         truncation=True,
         return_tensors="pt",
     )

@@ -44,8 +44,7 @@ def find_top_conflicts(article, model, tokenizer, chroma_collection, top_k=10, i
         article,
         add_special_tokens=True,
         max_length=ml,
-        padding="longest",
-        pad_to_multiple_of=64,
+        padding="max_length",
         truncation=True,
         return_tensors="pt",
     )
