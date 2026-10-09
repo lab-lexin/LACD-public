@@ -278,14 +278,9 @@ def binary_retriever(
             t_h2d_ev = t_fwd_ev = t_d2h_ev = 0.0
         else:
             _ev = None
-        # Length bucketing (DESCENDING): homogeneous lengths keep
-        # padding="longest" batches tight (measured ~3.4x fewer forward tokens
-        # on laws.csv), while peak-first ordering is allocator-friendly: the
-        # largest blocks are cached up front and reused by shrinking batches,
-        # so reserved memory stays flat instead of ballooning monotonically.
-        # Triples (doc, embedding, id) keep their original positional ids, so
-        # DB content and resume logic are order-independent.
-        order = sorted(missing, key=lambda i: len(all_articles[i]), reverse=True)
+        # Upstream baseline order and padding: sequential index order and max_length padding (4096)
+        # to ensure BigBird uses Block-Sparse Attention identical to upstream Chroma DB.
+        order = list(missing)
         ptr = 0
         pbar = tqdm(total=len(order))
         while ptr < len(order):
@@ -296,8 +291,7 @@ def binary_retriever(
                 batch_articles,
                 add_special_tokens=True,
                 max_length=max_length,
-                padding="longest",
-                pad_to_multiple_of=64,
+                padding="max_length",
                 truncation=True,
                 return_tensors="pt"
             )
